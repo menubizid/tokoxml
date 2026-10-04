@@ -7320,7 +7320,7 @@ function testiForm(id, list) {
   });
 }
 
-/* =========================== 17. STAF, SETELAH, AUDIT =================== */
+/* =========================== 17. STAF, PENGATURAN, AUDIT =================== */
 function page_staff() {
   $('#viewBox').innerHTML =
     '<div class="page">' +
