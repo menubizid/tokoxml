@@ -2495,7 +2495,8 @@ function closeModal(id) {
 function closeAllModals() { $$('.modal.open').forEach(function (m) { m.classList.remove('open'); }); document.body.classList.remove('no-scroll'); }
 
 /** Dialog konfirmasi serbaguna (pengganti window.confirm). */
-function confirmBox(o) {
+function confirmBox(o, text, onYes, yesLabel) {
+  if (!(o && typeof o === 'object')) o = { title: o, text: text, onYes: onYes, yesLabel: yesLabel };
   o = o || {};
   $('#cfTitle').textContent = o.title || 'Anda yakin?';
   $('#cfText').innerHTML = o.text || 'Tindakan ini tidak dapat dibatalkan.';
@@ -2512,24 +2513,6 @@ function confirmBox(o) {
   yes.onclick = function () { var r = o.onYes ? o.onYes() : null; if (r !== false) done(); };
   $('#cfNo').onclick = function () { if (o.onNo) o.onNo(); done(); };
   openModal('mConfirm');
-}
-
-/** Modal berhasil generik dengan tombol WhatsApp opsional. */
-function successBox(o) {
-  o = o || {};
-  $('#msTitle').textContent = o.title || 'Berhasil!';
-  $('#msText').innerHTML = o.text || '';
-  var kode = $('#msKode');
-  if (o.rows && o.rows.length) {
-    kode.innerHTML = o.rows.map(function (r) {
-      return '<div class="info-row"><span class="k">' + esc(r[0]) + '</span><span class="v">' + esc(r[1]) + '</span></div>';
-    }).join('');
-    kode.classList.remove('hide');
-  } else { kode.innerHTML = ''; kode.classList.add('hide'); }
-  var btn = $('#msWaBtn');
-  if (o.wa) { btn.classList.remove('hide'); btn.onclick = function () { window.open(o.wa, '_blank', 'noopener'); }; }
-  else { btn.classList.add('hide'); }
-  openModal('mSuccess');
 }
 
 /** Modal form generik untuk seluruh CRUD (dibuat sekali, dipakai berulang). */
@@ -4549,7 +4532,8 @@ function submitOrder() {
 }
 
 function successBox(title, text, rows, waHref, waLabel) {
-  $('#msTitle').textContent = title;
+  if (title && typeof title === 'object') { var o = title; title = o.title; text = o.text; rows = o.rows; waHref = o.wa || o.waHref; waLabel = o.waLabel; }
+  $('#msTitle').textContent = title || 'Berhasil!';
   $('#msText').textContent = text || '';
   var box = $('#msKode');
   if (rows && rows.length) {
